@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">photosAppNoExpo</string>
+    <string name="facebook_app_id">667584871504405</string>
+    <string name="fb_login_protocol_scheme">fb667584871504405</string>
+    <string name="facebook_client_token">076509e8d06c5851c0b736a21e522b20</string>
+    <string name="server_client_id">YOUR_SERVER_CLIENT_ID</string>
+
+</resources>
