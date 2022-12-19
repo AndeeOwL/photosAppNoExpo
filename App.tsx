@@ -14,7 +14,6 @@ import Email from './screens/Email';
 import {initStripe} from '@stripe/stripe-react-native';
 import PaymentScreen from './screens/PaymentScreen';
 import {RootStackParamList} from './types/navigationType';
-import * as SQLite from 'react-native-sqlite-storage';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
