@@ -7,20 +7,24 @@ import Home from './screens/Home';
 import Login from './screens/Login';
 import Register from './screens/Register';
 import PhotoPreview from './screens/PhotoPreview';
-import {init} from './util/database';
 import {LogBox, StatusBar} from 'react-native';
 import Draw from './screens/Draw';
 import Email from './screens/Email';
 import {initStripe} from '@stripe/stripe-react-native';
 import PaymentScreen from './screens/PaymentScreen';
 import {RootStackParamList} from './types/navigationType';
+import {createTable, getDBConnection} from './util/database';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
   LogBox.ignoreLogs(['source.uri', 'Possible', 'useEffect', 'Internal']);
+  const initDB = async () => {
+    const db = await getDBConnection();
+    await createTable(db);
+  };
   useEffect(() => {
-    init();
+    initDB();
   }, []);
 
   useEffect(() => {

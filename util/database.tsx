@@ -1,62 +1,48 @@
-import * as SQLite from 'react-native-sqlite-storage';
+import {
+  enablePromise,
+  openDatabase,
+  SQLiteDatabase,
+} from 'react-native-sqlite-storage';
 import {Alert} from 'react-native';
 
-SQLite.enablePromise(true);
+enablePromise(true);
 
 const errorCB = (err: any) => {
   console.log('SQL Error: ' + err);
-};
-
-const successCB = () => {
-  console.log('SQL executed fine');
 };
 
 const openCB = () => {
   console.log('Database OPENED');
 };
 
-const database = SQLite.openDatabase({name: 'photos.db'}, openCB, errorCB);
+export const getDBConnection = async () => {
+  return openDatabase(
+    {name: 'photos.db', location: 'default'},
+    openCB,
+    errorCB,
+  );
+};
 
-export function init() {
-  const promise = new Promise((resolve: any, reject: any) => {
-    database.transaction(tx => {
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS users (
+export const createTable = async (db: SQLiteDatabase) => {
+  const query = `CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY NOT NULL,
         username TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
         subscribed INTEGER NOT NULL
-    )`,
-        [],
-        () => {
-          resolve();
-        },
-        (_, error) => {
-          return reject(error);
-        },
-      );
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS photos (
+    )`;
+  const queryTwo = `CREATE TABLE IF NOT EXISTS photos (
         id INTEGER PRIMARY KEY NOT NULL,
         image TEXT NOT NULL,
         user_id INTEGER FOREIGN_KEY REFERENCES users(id)
-    )`,
-        [],
-        () => {
-          resolve();
-        },
-        (_, error) => {
-          return reject(error);
-        },
-      );
-    });
-  });
-  return promise;
-}
+    )`;
 
-export function insertPhoto(image: string, id: number) {
+  await db.executeSql(query);
+  await db.executeSql(queryTwo);
+};
+
+export function insertPhoto(db: SQLiteDatabase, image: string, id: number) {
   const promise = new Promise((resolve: any, reject: any) => {
-    database.transaction(tx => {
+    db.transaction(tx => {
       tx.executeSql(
         `INSERT INTO photos (image,user_id) VALUES (?,?)`,
         [image, id],
@@ -72,9 +58,9 @@ export function insertPhoto(image: string, id: number) {
   return promise;
 }
 
-export function fetchPhotos(id: number) {
+export function fetchPhotos(db: SQLiteDatabase, id: number) {
   const promise = new Promise((resolve: any, reject: any) => {
-    database.transaction(tx => {
+    db.transaction(tx => {
       tx.executeSql(
         `SELECT * FROM photos WHERE user_id LIKE '${id}'`,
         [],
@@ -94,9 +80,9 @@ export function fetchPhotos(id: number) {
   return promise;
 }
 
-export function subscribe(id: number, subscribed: number) {
+export function subscribe(db: SQLiteDatabase, id: number, subscribed: number) {
   const promise = new Promise((resolve: any, reject: any) => {
-    database.transaction(tx => {
+    db.transaction(tx => {
       tx.executeSql(
         `UPDATE users SET subscribed = ${subscribed} WHERE id LIKE '${id}'`,
         [],
@@ -113,12 +99,13 @@ export function subscribe(id: number, subscribed: number) {
 }
 
 export function insertUser(
+  db: SQLiteDatabase,
   username: string,
   password: string,
   subscribed: number,
 ) {
   const promise = new Promise((resolve: any, reject: any) => {
-    database.transaction(tx => {
+    db.transaction(tx => {
       tx.executeSql(
         `INSERT INTO users (username,password,subscribed) VALUES (?,?,?)`,
         [username, password, subscribed],
@@ -134,9 +121,9 @@ export function insertUser(
   return promise;
 }
 
-export function fetchUser(username: string) {
+export function fetchUser(db: SQLiteDatabase, username: string) {
   const promise = new Promise((resolve: any, reject: any) => {
-    database.transaction(tx => {
+    db.transaction(tx => {
       tx.executeSql(
         `SELECT * FROM users WHERE username LIKE '${username}'`,
         [],

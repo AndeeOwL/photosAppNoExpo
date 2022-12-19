@@ -3,11 +3,10 @@ import {useState} from 'react';
 import {Alert, StyleSheet, Text, View} from 'react-native';
 import {AccessToken, LoginButton, Profile} from 'react-native-fbsdk-next';
 import LoginForm from '../components/LoginForm';
-
 import {loginCheck} from '../services/userService';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../types/navigationType';
-import {fetchUser, insertUser} from '../util/database';
+import {fetchUser, getDBConnection, insertUser} from '../util/database';
 import {
   GoogleSignin,
   GoogleSigninButton,
@@ -47,7 +46,8 @@ function Login() {
   const loginWithFaceBook = () => {
     Profile.getCurrentProfile().then(async function (currentProfile: any) {
       if (currentProfile) {
-        const user: any = await fetchUser(currentProfile.name);
+        const db = await getDBConnection();
+        const user: any = await fetchUser(db, currentProfile.name);
         if (user.length === 4) {
           navigation.navigate('Home', {
             id: user[0],
@@ -55,8 +55,8 @@ function Login() {
             subscribed: user[3],
           });
         }
-        await insertUser(currentProfile.name, currentProfile.userID, 0);
-        const newUser: any = fetchUser(currentProfile.name);
+        await insertUser(db, currentProfile.name, currentProfile.userID, 0);
+        const newUser: any = fetchUser(db, currentProfile.name);
         navigation.navigate('Home', {
           id: newUser[0],
           username: newUser[1],
@@ -102,13 +102,15 @@ function Login() {
         }}
         onLogoutFinished={() => console.log('logout.')}
       />
-      <View style={styles.googleLoginButton}>
-        <GoogleSigninButton
-          size={GoogleSigninButton.Size.Standard}
-          color={GoogleSigninButton.Color.Dark}
-          onPress={signIn}
-        />
-      </View>
+      {
+        <View style={styles.googleLoginButton}>
+          <GoogleSigninButton
+            size={GoogleSigninButton.Size.Standard}
+            color={GoogleSigninButton.Color.Dark}
+            onPress={signIn}
+          />
+        </View>
+      }
     </View>
   );
 }
@@ -128,7 +130,6 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   googleLoginButton: {
-    backgroundColor: 'red',
     margin: 10,
     paddingHorizontal: 15,
   },

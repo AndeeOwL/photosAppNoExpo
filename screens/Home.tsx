@@ -5,7 +5,7 @@ import {Alert, Button, StyleSheet, Text, View} from 'react-native';
 import PhotosList from '../components/PhotosList';
 import {takePhoto, uploadPhoto} from '../services/photoService';
 import {HomeProps, RootStackParamList} from '../types/navigationType';
-import {fetchPhotos} from '../util/database';
+import {fetchPhotos, getDBConnection} from '../util/database';
 
 function Home({route}: HomeProps) {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -14,7 +14,8 @@ function Home({route}: HomeProps) {
 
   useEffect(() => {
     async function loadPhotos() {
-      const photoList: any = await fetchPhotos(route.params.id);
+      const db = await getDBConnection();
+      const photoList: any = await fetchPhotos(db, route.params.id);
       setLoadedImages(photoList);
     }
     if (isFocused) {

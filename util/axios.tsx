@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {cartInfo} from '../types/cartInfo';
-import {subscribe} from './database';
+import {getDBConnection, subscribe} from './database';
 
 export async function checkPaymentStatus(
   id: number,
@@ -15,7 +15,8 @@ export async function checkPaymentStatus(
   if (stripeResponse) {
     const {paid} = stripeResponse.data;
     if (paid === true) {
-      subscribe(id, 1);
+      const db = await getDBConnection();
+      subscribe(db, id, 1);
       return 'Payment Success';
     } else {
       return 'Payment failed due to some issue';

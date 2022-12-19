@@ -1,15 +1,15 @@
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { useState } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
-import RegisterForm from "../components/RegisterForm";
-import { RootStackParamList } from "../types/navigationType";
-import { insertUser } from "../util/database";
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {useState} from 'react';
+import {View, Text, StyleSheet, Alert} from 'react-native';
+import RegisterForm from '../components/RegisterForm';
+import {RootStackParamList} from '../types/navigationType';
+import {getDBConnection, insertUser} from '../util/database';
 
 function Register() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [repeatPassword, setRepeatPassword] = useState('');
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const usernameInputHandler = (enteredText: string) => {
@@ -26,12 +26,12 @@ function Register() {
 
   const navigateLogin = async () => {
     if (password !== repeatPassword) {
-      Alert.alert("Passwords does not match");
+      Alert.alert('Passwords does not match');
       return;
     }
-
-    await insertUser(username, password, 0);
-    navigation.navigate("Login");
+    const db = await getDBConnection();
+    await insertUser(db, username, password, 0);
+    navigation.navigate('Login');
   };
 
   return (
@@ -52,13 +52,13 @@ export default Register;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "aqua",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: 'aqua',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 36,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginTop: 50,
   },
 });

@@ -1,9 +1,10 @@
 import {Alert} from 'react-native';
 
-import {fetchUser} from '../util/database';
+import {fetchUser, getDBConnection} from '../util/database';
 
 export async function loginCheck(username: string, password: string) {
-  const user: any = await fetchUser(username);
+  const db = await getDBConnection();
+  const user: any = await fetchUser(db, username);
   if (user) {
     if (username !== user[1]) {
       Alert.alert('Invalid username');
