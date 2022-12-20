@@ -1,4 +1,5 @@
 import 'react-native-gesture-handler';
+import 'react-native-sqlite-storage';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
