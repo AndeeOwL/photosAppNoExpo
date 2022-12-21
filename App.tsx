@@ -15,10 +15,12 @@ import {initStripe} from '@stripe/stripe-react-native';
 import PaymentScreen from './screens/PaymentScreen';
 import {RootStackParamList} from './types/navigationType';
 import {createTable, getDBConnection} from './util/database';
+import {Settings} from 'react-native-fbsdk-next';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
+  Settings.initializeSDK();
   LogBox.ignoreLogs(['source.uri', 'Possible', 'useEffect', 'Internal']);
   const initDB = async () => {
     const db = await getDBConnection();

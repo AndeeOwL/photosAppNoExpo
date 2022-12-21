@@ -20,6 +20,12 @@ function Login() {
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
+  GoogleSignin.configure({
+    scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+    webClientId: 'CLIENT_ID',
+    iosClientId: 'CLIENT_ID',
+  });
+
   const userInputHandler = (enteredText: string) => {
     setUsername(enteredText);
   };
@@ -46,7 +52,6 @@ function Login() {
   const loginWithFaceBook = () => {
     Profile.getCurrentProfile().then(async function (currentProfile: any) {
       if (currentProfile) {
-        console.log(currentProfile);
         const db = await getDBConnection();
         const user: any = await fetchUser(db, currentProfile.name);
         if (user.length === 4) {
