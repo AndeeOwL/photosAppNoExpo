@@ -23,7 +23,7 @@ function Draw({route}: DrawProps) {
   return (
     <>
       <ViewShot style={{flex: 1}} ref={ref}>
-        <Canvas />
+        <Canvas color="black" style={{backgroundColor: 'white'}} />
       </ViewShot>
       <View style={{marginBottom: 25}}>
         <Button onPress={mySaveFx} title={'Save drawing'} />
